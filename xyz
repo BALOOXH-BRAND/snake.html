@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .game-container {
+            position: relative;
+            width: 90vw; /* Adjusted for mobile screen */
+            height: 90vw; /* Adjusted for mobile screen */
+            border: 2px solid #000;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            width: 90vw; /* Adjusted for mobile screen */
+            margin-top: 20px; /* Adjusted for mobile screen */
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .line {
+            width: 90vw; /* Adjusted for mobile screen */
+            height: 2px;
+            background-color: #000;
+            margin-bottom: 20px;
+        }
+
+        .snake {
+            width: calc(90vw / 20); /* Adjusted for mobile screen */
+            height: calc(90vw / 20); /* Adjusted for mobile screen */
+            background-color: #0f0;
+            position: absolute;
+        }
+
+        .food {
+            width: calc(90vw / 20); /* Adjusted for mobile screen */
+            height: calc(90vw / 20); /* Adjusted for mobile screen */
+            background-color: #00f;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="snake"></div>
+        <div class="food"></div>
+    </div>
+    <div class="button-container">
+        <button class="button" onclick="moveUp()">Up</button>
+    </div>
+    <div class="button-container">
+        <button class="button" onclick="moveLeft()">Left</button>
+        <button class="button" onclick="moveRight()">Right</button>
+    </div>
+    <div class="button-container">
+        <button class="button" onclick="moveDown()">Down</button>
+    </div>
+
+    <script>
+        const gameContainer = document.querySelector('.game-container');
+        const snakeElement = document.querySelector('.snake');
+        const foodElement = document.querySelector('.food');
+
+        let snake = [{x: 9, y: 9}]; // Starting position adjusted for mobile screen
+        let dx = 0;
+        let dy = 0;
+        let foodX = 0;
+        let foodY = 0;
+        let intervalId = null;
+
+        function moveSnake() {
+            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+            snake.unshift(head);
+            if (head.x === foodX && head.y === foodY) {
+                generateFood();
+            } else {
+                snake.pop();
+            }
+        }
+
+        function generateFood() {
+            foodX = Math.floor(Math.random() * 20); // Adjusted for mobile screen
+            foodY = Math.floor(Math.random() * 20); // Adjusted for mobile screen
+            foodElement.style.left = foodX * (90 / 20) + 'vw'; // Adjusted for mobile screen
+            foodElement.style.top = foodY * (90 / 20) + 'vw'; // Adjusted for mobile screen
+        }
+
+        function moveUp() {
+            if (dy !== 1) { // Adjusted for mobile screen
+                dx = 0;
+                dy = -1; // Adjusted for mobile screen
+            }
+        }
+
+        function moveDown() {
+            if (dy !== -1) { // Adjusted for mobile screen
+                dx = 0;
+                dy = 1; // Adjusted for mobile screen
+            }
+        }
+
+        function moveLeft() {
+            if (dx !== 1) { // Adjusted for mobile screen
+                dx = -1; // Adjusted for mobile screen
+                dy = 0;
+            }
+        }
+
+        function moveRight() {
+            if (dx !== -1) { // Adjusted for mobile screen
+                dx = 1; // Adjusted for mobile screen
+                dy = 0;
+            }
+        }
+
+        function checkCollision() {
+            const head = snake[0];
+            if (head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20) { // Adjusted for mobile screen
+                clearInterval(intervalId);
+                alert('Game Over! You collided with the wall.');
+            }
+            for (let i = 1; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    clearInterval(intervalId);
+                    alert('Game Over! You collided with yourself.');
+                    break;
+                }
+            }
+        }
+
+        function updateSnake() {
+            snakeElement.innerHTML = '';
+            snake.forEach(segment => {
+                const div = document.createElement('div');
+                div.style.width = 'calc(90vw / 20)'; // Adjusted for mobile screen
+                div.style.height = 'calc(90vw / 20)'; // Adjusted for mobile screen
+                div.style.backgroundColor = '#0f0';
+                div.style.position = 'absolute';
+                div.style.left = segment.x * (90 / 20) + 'vw'; // Adjusted for mobile screen
+                div.style.top = segment.y * (90 / 20) + 'vw'; // Adjusted for mobile screen
+                snakeElement.appendChild(div);
+            });
+        }
+
+        function gameLoop() {
+            moveSnake();
+            checkCollision();
+            updateSnake();
+        }
+
+        generateFood();
+        intervalId = setInterval(gameLoop, 1000);
+    </script>
+</body>
+</html>
